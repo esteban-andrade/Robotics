@@ -42,7 +42,7 @@ function GetUR5Robot(self)
     L(7) = Link([0      0       0       0       0]);
     
     % Incorporate joint limits
-    L(1).qlim = [-0.4 0.4];
+    L(1).qlim = [-0.8 0];
     L(2).qlim = [-360 360]*pi/180;
     L(3).qlim = [-90 90]*pi/180;
     L(4).qlim = [-170 170]*pi/180;
