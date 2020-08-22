@@ -1,4 +1,4 @@
-%% Robotics
+;pz/j]%% Robotics
 % Lab 4 - Question 3 & 4 - Inverse Kinematics & Joint Interpolation
 function Lab4Solution_Question2and3
 
