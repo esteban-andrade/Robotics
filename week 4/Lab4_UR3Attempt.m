@@ -20,4 +20,4 @@ animate(UR3A.model, q);
 animate(UR3B.model, q);
 %UR3A.model.teach();
 %UR3B.model.teach();
-show 
+

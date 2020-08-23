@@ -33,6 +33,7 @@ axis equal;
 view(3);
 hold on;
 
+
 keyboard
 % clf
 
@@ -43,7 +44,7 @@ keyboard
 % Scale the colours to be 0-to-1 (they are originally 0-to-255
 vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
 
-% Then plot the trisurf
+% Then plot the tris urf
 tableMesh_h = trisurf(f,v(:,1),v(:,2), v(:,3) ...
     ,'FaceVertexCData',vertexColours,'EdgeColor','interp','EdgeLighting','flat');
 
