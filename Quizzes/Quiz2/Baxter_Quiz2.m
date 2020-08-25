@@ -4,7 +4,7 @@ mdl_baxter
 
 LEFT = 0;
 RIGHT = 1;
-
+view(3)
 % Set this as either LEFT or RIGHT
 robotToUse = LEFT;
 

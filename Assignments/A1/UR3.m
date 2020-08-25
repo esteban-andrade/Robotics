@@ -5,7 +5,7 @@ classdef UR3 < handle
         model;
         
         %> workspace
-        workspace = [-2 2 -2 2 -0.8 2];   
+        workspace = [-2 2 -2 2 -0.3 2];   
        % workspace = [-1.6 1.6 -1.6 1.6 -0.3 1];  %change workspace for easier approach        
         %> If we have a tool model which will replace the final links model, combined ply file of the tool model and the final link models
         toolModelFilename = []; % Available are: 'DabPrintNozzleTool.ply';        
@@ -42,9 +42,9 @@ classdef UR3 < handle
             name = ['UR_3_',datestr(now,'yyyymmddTHHMMSSFFF')];
 
             L1 = Link('d',0.1519,'a',0,'alpha',pi/2,'qlim',deg2rad([-360 360]), 'offset', 0);
-            L2 = Link('d',0,'a',-0.24365,'alpha',0,'qlim', deg2rad([-360 360]), 'offset',0); % was 'offset',pi/2
+            L2 = Link('d',0,'a',-0.24365,'alpha',0,'qlim', deg2rad([-360 360]), 'offset',-pi/2); % was 'offset',pi/2
             L3 = Link('d',0,'a',-0.21325,'alpha',0,'qlim', deg2rad([-360 360]), 'offset', 0);
-            L4 = Link('d',0.11235,'a',0,'alpha',pi/2,'qlim',deg2rad([-360 360]),'offset', 0); % was 'offset',pi/2
+            L4 = Link('d',0.11235,'a',0,'alpha',pi/2,'qlim',deg2rad([-360 360]),'offset', -pi/2); % was 'offset',pi/2
             L5 = Link('d',0.08535,'a',0,'alpha',-pi/2,'qlim',deg2rad([-360,360]), 'offset',0);
             L6 = Link('d',0.0819,'a',0,'alpha',0,'qlim',deg2rad([-360,360]), 'offset', 0);
 

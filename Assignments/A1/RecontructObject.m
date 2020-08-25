@@ -39,7 +39,7 @@ classdef RecontructObject < handle
             obj.pose = eye(4)*obj.orientation*obj.position;
             updatedPoints = [obj.pose * [obj.verts,ones(obj.vertexCount,1)]']';
             obj.mesh.Vertices =  updatedPoints(:,1:3);
-            
+            %drawnow();
         end
         
     end

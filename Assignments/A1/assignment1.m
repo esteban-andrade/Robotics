@@ -7,11 +7,11 @@ clf
 set(0,'DefaultFigureWindowStyle','docked');
 view(3);
 UR3A = UR3;
-hold on
-UR5A = UR3;%change to UR5 later
+%hold on
+UR5A = LinearUR5(false);%change to UR5 later
 axis image
-baseATransform = transl(-0.5, 0,0);
-baseBTransform = transl(0.5, 0,0);
+baseATransform = transl(-1,0,0);
+baseBTransform = transl(1,0,0)*trotx(pi/2);%*troty(pi/2);
 centreA = baseATransform(:,4);
 centreB= baseBTransform(:,4);
 centre = (centreA+centreB)/2;
@@ -19,22 +19,27 @@ UR3A.model.base = baseATransform;
 UR5A.model.base = baseBTransform;
 %UR3 Joint angles zero state
 q = zeros(1,6);
+p=zeros(1,7);
 animate(UR3A.model, q);
 hold on
-animate(UR5A.model, q);
+animate(UR5A.model, p);
 % UR3A.model.teach();
 % UR3B.model.teach();
 
 %% Loading Enviroment
 
-disp('Loading Models and Enviroment');
+disp('Loading Models and Environment');
 
 
 
 middlePointInBetweenRobot= middlePointInBetween(baseATransform,baseBTransform);
 tablePosition =[middlePointInBetweenRobot(1),middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)-0.356];
 tableOrientation =[0,0,0];
-Table = RecontructObject('table.ply',tableOrientation,tablePosition);
+Table = RecontructObject('table3.ply',tableOrientation,tablePosition);
+
+floorPosition = [middlePointInBetweenRobot(1)+0.7,middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)];
+floorOrientation =[0,pi/2,0];
+Floor = RecontructObjectNonRGB('floor2.ply',floorOrientation,floorPosition);
 
 brick1Position = [-0.2,-0.2,0.05];
 brick1Orientation = [0,0,0];
@@ -72,14 +77,39 @@ brick9Position = [0.2,0.4,0.12];
 brick9Orientation = [0,0,0];
 brick9 = RecontructObject('Brick.ply',brick9Orientation,brick9Position);
 
-%Adding Person
-[f,v,data] = plyread('full_body.ply','tri');
+
+BobPosition = [middlePointInBetweenRobot(1),middlePointInBetweenRobot(2)+3,middlePointInBetweenRobot(3)];
+BobOrientation = [0,0,0];
+Bob = RecontructObjectNonRGB('full_body.ply',BobOrientation,BobPosition);
+
+fence1Position= [middlePointInBetweenRobot(1)+2.5,middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)+0.3];
+fence1Orientation = [0,0,pi/2];
+fence1 = RecontructObject('fence.ply',fence1Orientation,fence1Position);
+
+fence2Position= [middlePointInBetweenRobot(1)-2.5,middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)+0.3];
+fence2Orientation = [0,0,pi/2];
+fence2 = RecontructObject('fence.ply',fence2Orientation,fence2Position);
+
+fence3Position= [middlePointInBetweenRobot(1)+2.5,middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)+0.3];
+fence3Orientation = [0,0,0];
+fence3 = RecontructObject('fence.ply',fence3Orientation,fence3Position);
+% 
+fence4Position= [middlePointInBetweenRobot(1)-2.5,middlePointInBetweenRobot(2),middlePointInBetweenRobot(3)+0.3];
+fence4Orientation = [0,0,0];
+fence4 = RecontructObject('fence.ply',fence4Orientation,fence4Position);
+
+eButtonPosition = [middlePointInBetweenRobot(1)+1.7,middlePointInBetweenRobot(2)+0.7,middlePointInBetweenRobot(3)+0.1];
+eButtonOrientation = [0,0,0];
+eButton = RecontructObject('emergency.ply',eButtonOrientation,eButtonPosition);
 
 
+warning1Position = [middlePointInBetweenRobot(1),middlePointInBetweenRobot(2)+2.6,middlePointInBetweenRobot(3)+0.7];
+warning1Orientation = [0,0,0];
+warning1 = RecontructObject('warning.ply',warning1Orientation,warning1Position);
 
-% Then plot the trisurf
-person = trisurf(f,v(:,1)+1.5,v(:,2)+1.5, v(:,3) ...
-    ,'EdgeColor','interp','EdgeLighting','flat');
+%warning2Position = [middlePointInBetweenRobot(1),middlePointInBetweenRobot(2)-2.6,middlePointInBetweenRobot(3)-0.7];
+%warning2Orientation = [0,0,pi];
+%warning2 = RecontructObject('warning.ply',warning2Orientation,warning2Position);
 
 
-disp('Enviroment Imported');
+disp('Environment Imported');

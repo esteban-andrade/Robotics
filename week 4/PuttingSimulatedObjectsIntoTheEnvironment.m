@@ -39,7 +39,7 @@ keyboard
 
 %% Load the table downloaded from http://tf3dm.com/3d-model/wooden-table-49763.html vertex colours added with Blender
 
-[f,v,data] = plyread('table.ply','tri');
+[f,v,data] = plyread('warning-sign.ply','tri');
 
 % Scale the colours to be 0-to-1 (they are originally 0-to-255
 vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
