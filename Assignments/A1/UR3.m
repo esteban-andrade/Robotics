@@ -3,7 +3,12 @@ classdef UR3 < handle
     properties
         %> Robot model
         model;
-        
+        volume=[];
+        computedVolume;
+        transveralReach;
+        verticalReach;
+        arcRadius;
+        name;
         %> workspace
         workspace = [-2 2 -2 2 -0.3 2];   
        % workspace = [-1.6 1.6 -1.6 1.6 -0.3 1];  %change workspace for easier approach        
@@ -13,33 +18,40 @@ classdef UR3 < handle
     end
     
     methods%% Class for UR3 robot simulation
-        function self = UR3(toolModelAndTCPFilenames)
-            if 0 < nargin
-                if length(toolModelAndTCPFilenames) ~= 2
-                    error('Please pass a cell with two strings, toolModelFilename and toolCenterPointFilename');
-                end
-                self.toolModelFilename = toolModelAndTCPFilenames{1};
-                self.toolParametersFilename = toolModelAndTCPFilenames{2};
-            end
-            
-            self.GetUR3Robot();
-            self.PlotAndColourRobot();%robot,workspace);
+%         function self = UR3(toolModelAndTCPFilenames)
+%             if 0 < nargin
+%                 if length(toolModelAndTCPFilenames) ~= 2
+%                     error('Please pass a cell with two strings, toolModelFilename and toolCenterPointFilename');
+%                 end
+%                 self.toolModelFilename = toolModelAndTCPFilenames{1};
+%                 self.toolParametersFilename = toolModelAndTCPFilenames{2};
+%             end
+%             
+%             self.GetUR3Robot();
+%             self.PlotAndColourRobot();%robot,workspace);
+% 
+%             drawnow   
 
-            drawnow            
-            % camzoom(2)
-            % campos([6.9744    3.5061    1.8165]);
-
-%             camzoom(4)
-%             view([122,14]);
-%             camzoom(8)
-%             teach(self.model);
-        end
+function self = UR3(acronym);
+    self.name = ['UR 3 ',acronym];
+    self.GetUR3Robot(self.name);
+    self.PlotAndColourRobot();%
+    
+    drawnow
+    % camzoom(2)
+    % campos([6.9744    3.5061    1.8165]);
+    
+    %             camzoom(4)
+    %             view([122,14]);
+    %             camzoom(8)
+    %             teach(self.model);
+end
 
         %% GetUR3Robot
         % Given a name (optional), create and return a UR3 robot model
-        function GetUR3Robot(self)
+        function GetUR3Robot(self,name)
             pause(0.001);
-            name = ['UR_3_',datestr(now,'yyyymmddTHHMMSSFFF')];
+            %name = ['UR_3_',datestr(now,'yyyymmddTHHMMSSFFF')];
 
             L1 = Link('d',0.1519,'a',0,'alpha',pi/2,'qlim',deg2rad([-360 360]), 'offset', 0);
             L2 = Link('d',0,'a',-0.24365,'alpha',0,'qlim', deg2rad([-360 360]), 'offset',-pi/2); % was 'offset',pi/2
@@ -49,7 +61,7 @@ classdef UR3 < handle
             L6 = Link('d',0.0819,'a',0,'alpha',0,'qlim',deg2rad([-360,360]), 'offset', 0);
 
             self.model = SerialLink([L1 L2 L3 L4 L5 L6],'name',name);
-        
+            self.name = name;
         end
 
         %% PlotAndColourRobot
@@ -92,6 +104,70 @@ classdef UR3 < handle
                     continue;
                 end
             end
-        end        
+        end 
+        
+        %% draw the volume of the arm
+        
+        function DrawVolumeArm(self,degrees)
+            stepRads = deg2rad(degrees);
+            qlim = self.model.qlim;
+           
+            % Don't need to worry about joint 6
+            pointCloudeSize = prod(floor((qlim(1:5,2)-qlim(1:5,1))/stepRads + 1));
+            pointCloud = zeros(pointCloudeSize,3);
+            counter = 1;
+            tic % start counter
+            
+            for q1 = qlim(1,1):stepRads:qlim(1,2)
+                for q2 = qlim(2,1):stepRads:qlim(2,2)
+                    for q3 = qlim(3,1):stepRads:qlim(3,2)
+                        for q4 = qlim(4,1):stepRads:qlim(4,2)
+                            for q5 = qlim(5,1):stepRads:qlim(5,2)
+                                q6 =0; % no need to worry about joint 6 Assume 0
+                                %for q6 = qlim(6,1):stepRads:qlim(6,2)
+                                
+                                q = [q1,q2,q3,q4,q5,q6];
+                                
+                                tr = self.model.fkine(q);
+                                pointCloud(counter,:) = tr(1:3,4)'; % ' is to get the inverse
+                               
+                                counter = counter +1;
+                                if mod(counter/pointCloudeSize*100,1)==0
+                                    display(['After ',num2str(toc),' seconds, completed ',num2str(counter/pointCloudeSize * 100),'% of poses of UR3'])
+                                    self.volume=pointCloud;
+                                end
+                                %end
+                            end
+                        end
+                    end
+                end
+            end
+
+            plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
+            
+        end
+    %%    get Reach
+        function getReach(self)
+            maxX = max(self.volume(:,1)) - self.model.base(1,4);
+            minX = min(self.volume(:,1)) - self.model.base(1,4);
+            maxY = max(self.volume(:,2)) - self.model.base(2,4);
+            minY = min(self.volume(:,2)) - self.model.base(2,4);
+            maxZ = max(self.volume(:,3)) - self.model.base(3,4);
+            minZ = min(self.volume(:,3)) - self.model.base(3,4);
+            
+            xAxisReach = max(maxX, abs(minX));
+            yAxisReach =  max(maxY, abs(minY));
+            self.transveralReach =  max(xAxisReach, yAxisReach);
+            self.verticalReach =  max(maxZ, abs(minZ));
+            self.arcRadius = (self.verticalReach/2)+((self.transveralReach)^2 /8*self.verticalReach);
+        end
+        
+        %% point cloud Sweep
+        
+        function plotArmVolume (self)
+           [k,self.computedVolume]=convhull(self.volume(:,1),self.volume(:,2),self.volume(:,3));
+           trisurf(k,self.volume(:,1),self.volume(:,2),self.volume(:,3),'Facecolor','cyan');
+           
+        end
     end
 end
