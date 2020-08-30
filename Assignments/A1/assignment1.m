@@ -32,7 +32,7 @@ volumeRobot=1; %if 1 UR3, if 2 UR5 ,IF both 3
 degrees = 60;
 
 figure('Name','Point Clouds Robot')
-if volumeRobot==1 
+if volumeRobot==1
     UR3A.DrawVolumeArm(degrees);
     volumeUR3=UR3A.volume;
 elseif volumeRobot==2
@@ -60,17 +60,15 @@ disp(['Calculated WorkSpace Volume: ',num2str(UR3A.computedVolume),' m3']);
 
 disp('Loading Models and Environment');
 
-
-
 middlePointInBetweenRobot= middlePointInBetween(baseATransform,baseBTransform);
-tablePosition =[middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)-0.356];
+tablePosition =[middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)-0.356-centre(3)];
 tableOrientation =[0,0,0];
 Table = RecontructObject('table3.ply',tableOrientation,tablePosition);
 
-floorPosition = [middlePointInBetweenRobot(1)+0.7-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)];
+floorPosition = [middlePointInBetweenRobot(1)+0.7-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)-centre(3)];
 floorOrientation =[0,pi/2,0];
 Floor = RecontructObjectNonRGB('floor2.ply',floorOrientation,floorPosition);
-
+%BRICK 1 to 4 for UR3
 brick1Position = [0.5,-0.5,-0.06];
 brick1Orientation = [pi,0,0];
 brick1 = RecontructObject('Brick.ply',brick1Orientation,brick1Position);
@@ -91,7 +89,7 @@ brick4Orientation = [pi,0,0];
 brick4 = RecontructObject('Brick.ply',brick4Orientation,brick4Position);
 brick4Destiny = transl(0,-0.2,0.18)*rpy2tr(brick4Orientation);
 
-%BRICK 1 to 4 for UR3
+%BRICK 5 to 9 for UR5
 
 brick5Position = [-1,-0.75,-0.06];
 brick5Orientation = [pi,0,0];
@@ -118,364 +116,452 @@ brick9Orientation = [pi,0,0];
 brick9 = RecontructObject('Brick.ply',brick9Orientation,brick9Position);
 brick9Destiny = transl(0,0.2,0.18)*rpy2tr(brick9Orientation);
 
-BobPosition = [middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)+3-centre(2),middlePointInBetweenRobot(3)];
+BobPosition = [middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)+3-centre(2),middlePointInBetweenRobot(3)-centre(3)];
 BobOrientation = [0,0,0];
 Bob = RecontructObjectNonRGB('full_body.ply',BobOrientation,BobPosition);
 
-fence1Position= [middlePointInBetweenRobot(1)+2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3];
+fence1Position= [middlePointInBetweenRobot(1)+2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3-centre(3)];
 fence1Orientation = [0,0,pi/2];
 fence1 = RecontructObject('fence.ply',fence1Orientation,fence1Position);
 
-fence2Position= [middlePointInBetweenRobot(1)-2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3];
+fence2Position= [middlePointInBetweenRobot(1)-2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3-centre(3)];
 fence2Orientation = [0,0,pi/2];
 fence2 = RecontructObject('fence.ply',fence2Orientation,fence2Position);
 
-fence3Position= [middlePointInBetweenRobot(1)+2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3];
+fence3Position= [middlePointInBetweenRobot(1)+2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3-centre(3)];
 fence3Orientation = [0,0,0];
 fence3 = RecontructObject('fence.ply',fence3Orientation,fence3Position);
 
-fence4Position= [middlePointInBetweenRobot(1)-2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3];
+fence4Position= [middlePointInBetweenRobot(1)-2.5-centre(1),middlePointInBetweenRobot(2)-centre(2),middlePointInBetweenRobot(3)+0.3-centre(3)];
 fence4Orientation = [0,0,0];
 fence4 = RecontructObject('fence.ply',fence4Orientation,fence4Position);
 
-eButtonPosition = [middlePointInBetweenRobot(1)+1.7-centre(1),middlePointInBetweenRobot(2)+0.7-centre(2),middlePointInBetweenRobot(3)+0.1];
+eButtonPosition = [middlePointInBetweenRobot(1)+1.7-centre(1),middlePointInBetweenRobot(2)+0.7-centre(2),middlePointInBetweenRobot(3)+0.1-centre(3)];
 eButtonOrientation = [0,0,0];
 eButton = RecontructObject('emergency.ply',eButtonOrientation,eButtonPosition);
 
-
-warning1Position = [middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)+2.6-centre(2),middlePointInBetweenRobot(3)+0.7];
+warning1Position = [middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)-2.6-centre(2),middlePointInBetweenRobot(3)+0.7-centre(3)];
 warning1Orientation = [0,0,0];
 warning1 = RecontructObject('warning.ply',warning1Orientation,warning1Position);
 
-%warning2Position = [middlePointInBetweenRobot(1),middlePointInBetweenRobot(2)-2.6,middlePointInBetweenRobot(3)-0.7];
-%warning2Orientation = [0,0,pi];
-%warning2 = RecontructObject('warning.ply',warning2Orientation,warning2Position);
+warning2Position = [middlePointInBetweenRobot(1)-centre(1),middlePointInBetweenRobot(2)-2.6-centre(2),middlePointInBetweenRobot(3)+0.7-centre(3)];
+warning2Orientation = [0,0,pi];
+warning2 = RecontructObject('warning.ply',warning2Orientation,warning2Position);
 
 animate(UR3A.model, q);
 hold on
 animate(UR5A.model, p);
 disp('Environment Imported');
 
-%% Kinematics 
+%% Kinematics
 steps=60;
-
+mode =2; % Mode 1 for single arm movement, Mode 2 double arm movement (Order UR3 to UR5)
 brickCollected = false;
 brickDeposited=false;
 
 qUR3still = [0 0 0 0 0 0];
 qUR5still = [0 0 0 0 0 0 0];
 
-q1_1=UR3A.model.getpos();
-[q2_1,err2_1,exitflag_1]=UR3A.model.ikcon(brick1.pose,q1_1);
-qmatrix_1 = robotMotion.interpolateJointAnglesUR3(q1_1,q2_1,steps);
-robotMotion.motion(qmatrix_1,UR3A.model);
-brickCollected=true;
+if mode ==1
+    
+    q1_1=UR3A.model.getpos();
+    [q2_1,err2_1,exitflag_1]=UR3A.model.ikcon(brick1.pose,q1_1);
+    qmatrix_1 = robotMotion.interpolateJointAnglesUR3(q1_1,q2_1,steps);
+    robotMotion.motion(qmatrix_1,UR3A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_1 = qmatrix_1(end,:);
+        [q4_1,err4_1,exitflag4_1]=UR3A.model.ikcon(brick1Destiny,q3_1);
+        qmatrixDes_1 = robotMotion.interpolateJointAnglesUR3(q3_1,q4_1,steps);
+        robotMotion.objectMotion(qmatrixDes_1,UR3A.model,brick1,brick1Destiny);
+        
+        brickDeposited=true;
+        if brickDeposited==true
+            
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            robotMotion.motion(restoreQMatrixUR3,UR3A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+    end
+    
+    q1_2=UR5A.model.getpos();
+    [q2_2,err2_2,exitflag_2]=UR5A.model.ikcon(brick5.pose,q1_2);
+    qmatrix_2 = robotMotion.interpolateJointAnglesLinearUR5(q1_2,q2_2,steps);
+    robotMotion.motion(qmatrix_2,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_2 = qmatrix_2(end,:);
+        [q4_2,err4_2,exitflag4_2]=UR5A.model.ikcon(brick5Destiny,q3_2);
+        qmatrixDes_2 = robotMotion.interpolateJointAnglesLinearUR5(q3_2,q4_2,steps);
+        
+        robotMotion.objectMotion(qmatrixDes_2,UR5A.model,brick5,brick5Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+    end
+    
+    q1_3=UR3A.model.getpos();
+    [q2_3,err2_3,exitflag_3]=UR3A.model.ikcon(brick2.pose,q1_3);
+    qmatrix_3 = robotMotion.interpolateJointAnglesUR3(q1_3,q2_3,steps);
+    robotMotion.motion(qmatrix_3,UR3A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_3 = qmatrix_3(end,:);
+        [q4_3,err4_3,exitflag4_3]=UR3A.model.ikcon(brick2Destiny,q3_3);
+        qmatrixDes_3 = robotMotion.interpolateJointAnglesUR3(q3_3,q4_3,steps);
+        robotMotion.objectMotion(qmatrixDes_3,UR3A.model,brick2,brick2Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            robotMotion.motion(restoreQMatrixUR3,UR3A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+    end
+    
+    q1_4=UR5A.model.getpos();
+    [q2_4,err2_4,exitflag_4]=UR5A.model.ikcon(brick6.pose,q1_4);
+    qmatrix_4 = robotMotion.interpolateJointAnglesLinearUR5(q1_4,q2_4,steps);
+    
+    robotMotion.motion(qmatrix_4,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_4 = qmatrix_4(end,:);
+        [q4_4,err4_4,exitflag4_4]=UR5A.model.ikcon(brick6Destiny,q3_4);
+        qmatrixDes_4 = robotMotion.interpolateJointAnglesLinearUR5(q3_4,q4_4,steps);
+        robotMotion.objectMotion(qmatrixDes_4,UR5A.model,brick6,brick6Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+            
+        end
+    end
+    
+    q1_5=UR3A.model.getpos();
+    [q2_5,err2_5,exitflag_5]=UR3A.model.ikcon(brick3.pose,q1_5);
+    qmatrix_5 = robotMotion.interpolateJointAnglesUR3(q1_5,q2_5,steps);
+    robotMotion.motion(qmatrix_5,UR3A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_5 = qmatrix_5(end,:);
+        [q4_5,err4_5,exitflag4_5]=UR3A.model.ikcon(brick3Destiny,q3_5);
+        qmatrixDes_5 = robotMotion.interpolateJointAnglesUR3(q3_5,q4_5,steps);
+        robotMotion.objectMotion(qmatrixDes_5,UR3A.model,brick3,brick3Destiny);
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            robotMotion.motion(restoreQMatrixUR3,UR3A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+    end
+    
+    q1_6=UR5A.model.getpos();
+    [q2_6,err2_6,exitflag_6]=UR5A.model.ikcon(brick7.pose,q1_6);
+    qmatrix_6 = robotMotion.interpolateJointAnglesLinearUR5(q1_6,q2_6,steps);
+    
+    robotMotion.motion(qmatrix_6,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_6 = qmatrix_6(end,:);
+        [q4_6,err4_6,exitflag4_6]=UR5A.model.ikcon(brick7Destiny,q3_6);
+        qmatrixDes_6 = robotMotion.interpolateJointAnglesLinearUR5(q3_6,q4_6,steps);
+        robotMotion.objectMotion(qmatrixDes_6,UR5A.model,brick7,brick7Destiny);
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+            
+        end
+    end
+    
+    q1_7=UR3A.model.getpos();
+    [q2_7,err2_7,exitflag_7]=UR3A.model.ikcon(brick4.pose,q1_7);
+    qmatrix_7 = robotMotion.interpolateJointAnglesUR3(q1_7,q2_7,steps);
+    robotMotion.motion(qmatrix_7,UR3A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_7 = qmatrix_7(end,:);
+        [q4_7,err4_7,exitflag4_7]=UR3A.model.ikcon(brick4Destiny,q3_7);
+        qmatrixDes_7 = robotMotion.interpolateJointAnglesUR3(q3_7,q4_7,steps);
+        robotMotion.objectMotion(qmatrixDes_7,UR3A.model,brick4,brick4Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            robotMotion.motion(restoreQMatrixUR3,UR3A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+    end
+    
+    q1_8=UR5A.model.getpos();
+    [q2_8,err2_8,exitflag_8]=UR5A.model.ikcon(brick8.pose,q1_8);
+    qmatrix_8 = robotMotion.interpolateJointAnglesLinearUR5(q1_8,q2_8,steps);
+    
+    robotMotion.motion(qmatrix_8,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_8 = qmatrix_8(end,:);
+        [q4_8,err4_8,exitflag4_8]=UR5A.model.ikcon(brick8Destiny,q3_8);
+        qmatrixDes_8 = robotMotion.interpolateJointAnglesLinearUR5(q3_8,q4_8,steps);
+        
+        robotMotion.objectMotion(qmatrixDes_8,UR5A.model,brick8,brick8Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+            
+        end
+    end
+    
+    q1_9=UR5A.model.getpos();
+    [q2_9,err2_9,exitflag_9]=UR5A.model.ikcon(brick9.pose,q1_9);
+    qmatrix_9 = robotMotion.interpolateJointAnglesLinearUR5(q1_9,q2_9,steps);
+    
+    robotMotion.motion(qmatrix_9,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_9 = qmatrix_9(end,:);
+        [q4_9,err4_9,exitflag4_9]=UR5A.model.ikcon(brick9Destiny,q3_9);
+        qmatrixDes_9 = robotMotion.interpolateJointAnglesLinearUR5(q3_9,q4_9,steps);
+        
+        robotMotion.objectMotion(qmatrixDes_8,UR5A.model,brick9,brick9Destiny);
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+            
+        end
+    end
+    
+elseif mode ==2
+    
+    q1_1=UR3A.model.getpos();
+    [q2_1,err2_1,exitflag_1]=UR3A.model.ikcon(brick1.pose,q1_1);
+    qmatrix_1 = robotMotion.interpolateJointAnglesUR3(q1_1,q2_1,steps);
+    
+    q1_2=UR5A.model.getpos();
+    [q2_2,err2_2,exitflag_2]=UR5A.model.ikcon(brick5.pose,q1_2);
+    qmatrix_2 = robotMotion.interpolateJointAnglesLinearUR5(q1_2,q2_2,steps);
+    
+    robotMotion.doubleMotion(qmatrix_1,UR3A.model,qmatrix_2,UR5A.model)
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_1 = qmatrix_1(end,:);
+        [q4_1,err4_1,exitflag4_1]=UR3A.model.ikcon(brick1Destiny,q3_1);
+        qmatrixDes_1 = robotMotion.interpolateJointAnglesUR3(q3_1,q4_1,steps);
+        q3_2 = qmatrix_2(end,:);
+        [q4_2,err4_2,exitflag4_2]=UR5A.model.ikcon(brick5Destiny,q3_2);
+        qmatrixDes_2 = robotMotion.interpolateJointAnglesLinearUR5(q3_2,q4_2,steps);
+        
+        robotMotion.doubleObjectMotion(qmatrixDes_1,UR3A.model,brick1,brick1Destiny,qmatrixDes_2,UR5A.model,brick5,brick5Destiny);
+        brickDeposited=true;
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.doubleMotion(restoreQMatrixUR3,UR3A.model,restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+        
+    end
+    
+    
+    q1_3=UR3A.model.getpos();
+    [q2_3,err2_3,exitflag_3]=UR3A.model.ikcon(brick2.pose,q1_3);
+    qmatrix_3 = robotMotion.interpolateJointAnglesUR3(q1_3,q2_3,steps);
+    
+    q1_4=UR5A.model.getpos();
+    [q2_4,err2_4,exitflag_4]=UR5A.model.ikcon(brick6.pose,q1_4);
+    qmatrix_4 = robotMotion.interpolateJointAnglesLinearUR5(q1_4,q2_4,steps);
+    
+    robotMotion.doubleMotion(qmatrix_3,UR3A.model,qmatrix_4,UR5A.model)
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_3 = qmatrix_3(end,:);
+        [q4_3,err4_3,exitflag4_3]=UR3A.model.ikcon(brick2Destiny,q3_3);
+        qmatrixDes_3 = robotMotion.interpolateJointAnglesUR3(q3_3,q4_3,steps);
+        q3_4 = qmatrix_4(end,:);
+        [q4_4,err4_4,exitflag4_4]=UR5A.model.ikcon(brick6Destiny,q3_4);
+        qmatrixDes_4 = robotMotion.interpolateJointAnglesLinearUR5(q3_4,q4_4,steps);
+        
+        robotMotion.doubleObjectMotion(qmatrixDes_3,UR3A.model,brick2,brick2Destiny,qmatrixDes_4,UR5A.model,brick6,brick6Destiny);
+        brickDeposited=true;
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.doubleMotion(restoreQMatrixUR3,UR3A.model,restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+        
+    end
+    
+    q1_5=UR3A.model.getpos();
+    [q2_5,err2_5,exitflag_5]=UR3A.model.ikcon(brick3.pose,q1_5);
+    qmatrix_5 = robotMotion.interpolateJointAnglesUR3(q1_5,q2_5,steps);
+    
+    q1_6=UR5A.model.getpos();
+    [q2_6,err2_6,exitflag_6]=UR5A.model.ikcon(brick7.pose,q1_6);
+    qmatrix_6 = robotMotion.interpolateJointAnglesLinearUR5(q1_6,q2_6,steps);
+    
+    robotMotion.doubleMotion(qmatrix_5,UR3A.model,qmatrix_6,UR5A.model)
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_5 = qmatrix_5(end,:);
+        [q4_5,err4_5,exitflag4_5]=UR3A.model.ikcon(brick3Destiny,q3_5);
+        qmatrixDes_5 = robotMotion.interpolateJointAnglesUR3(q3_5,q4_5,steps);
+        q3_6 = qmatrix_6(end,:);
+        [q4_6,err4_6,exitflag4_6]=UR5A.model.ikcon(brick7Destiny,q3_6);
+        qmatrixDes_6 = robotMotion.interpolateJointAnglesLinearUR5(q3_6,q4_6,steps);
+        
+        robotMotion.doubleObjectMotion(qmatrixDes_5,UR3A.model,brick3,brick3Destiny,qmatrixDes_6,UR5A.model,brick7,brick7Destiny);
+        brickDeposited=true;
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.doubleMotion(restoreQMatrixUR3,UR3A.model,restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+        
+    end
+    
+    q1_7=UR3A.model.getpos();
+    [q2_7,err2_7,exitflag_7]=UR3A.model.ikcon(brick4.pose,q1_7);
+    qmatrix_7 = robotMotion.interpolateJointAnglesUR3(q1_7,q2_7,steps);
+    
+    q1_8=UR5A.model.getpos();
+    [q2_8,err2_8,exitflag_8]=UR5A.model.ikcon(brick8.pose,q1_8);
+    qmatrix_8 = robotMotion.interpolateJointAnglesLinearUR5(q1_8,q2_8,steps);
+    
+    robotMotion.doubleMotion(qmatrix_7,UR3A.model,qmatrix_8,UR5A.model)
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_7 = qmatrix_7(end,:);
+        [q4_7,err4_7,exitflag4_7]=UR3A.model.ikcon(brick4Destiny,q3_7);
+        qmatrixDes_7 = robotMotion.interpolateJointAnglesUR3(q3_7,q4_7,steps);
+        q3_8 = qmatrix_8(end,:);
+        [q4_8,err4_8,exitflag4_8]=UR5A.model.ikcon(brick8Destiny,q3_8);
+        qmatrixDes_8 = robotMotion.interpolateJointAnglesLinearUR5(q3_8,q4_8,steps);
+        
+        robotMotion.doubleObjectMotion(qmatrixDes_7,UR3A.model,brick4,brick4Destiny,qmatrixDes_8,UR5A.model,brick8,brick8Destiny);
+        brickDeposited=true;
+        if brickDeposited==true
+            restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.doubleMotion(restoreQMatrixUR3,UR3A.model,restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+        end
+        
+    end
+    
+    q1_9=UR5A.model.getpos();
+    [q2_9,err2_9,exitflag_9]=UR5A.model.ikcon(brick9.pose,q1_9);
+    qmatrix_9 = robotMotion.interpolateJointAnglesLinearUR5(q1_9,q2_9,steps);
+    
+    robotMotion.motion(qmatrix_9,UR5A.model);
+    brickCollected=true;
+    
+    if brickCollected ==true
+        q3_9 = qmatrix_9(end,:);
+        [q4_9,err4_9,exitflag4_9]=UR5A.model.ikcon(brick9Destiny,q3_9);
+        qmatrixDes_9 = robotMotion.interpolateJointAnglesLinearUR5(q3_9,q4_9,steps);
+        
+        robotMotion.objectMotion(qmatrixDes_8,UR5A.model,brick9,brick9Destiny);
+        
+        
+        brickDeposited=true;
+        
+        if brickDeposited==true
+            restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
+            robotMotion.motion(restoreQMatrixUR5,UR5A.model);
+            brickCollected = false;
+            brickDeposited=false;
+            
+        end
+    end
+    
+    
+end
 
-if brickCollected ==true
-    q3_1 = qmatrix_1(end,:);
-    [q4_1,err4_1,exitflag4_1]=UR3A.model.ikcon(brick1Destiny,q3_1);
-    qmatrixDes_1 = robotMotion.interpolateJointAnglesUR3(q3_1,q4_1,steps);
-    robotMotion.motion(qmatrixDes_1,UR3A.model);
-    brickDeposited=true;
+
+%% ROS BAG
+
+clc
+bag=rosbag('2018-03-20-18-34-46 .bag');
+topics = select(bag,'Topic','/joint_states');
+messages = readMessages(topics);
+resolution = 10;
+
+dataMode =1;% mode will be based for normal given data set or we take the transpose of that
+
+if dataMode==1
+    for i = 1:(size(messages,1)/resolution) %reduces the size of the matrix as the step resolution is too high and unnecessary
+        if i == 1
+            qMatrixBag(i,:) = (messages{i}.Position); %assigns a qMatrix with the joint states from the bag file
+        else
+            qMatrixBag(i,:) = (messages{i*resolution}.Position); %assigns a qMatrix with the joint states from the bag file
+            
+        end
+    end
     
-    if brickDeposited==true
-    
-    restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
-    robotMotion.motion(restoreQMatrixUR3,UR3A.model);
-    brickCollected = false;
-    brickDeposited=false;
+elseif dataMode==2
+    if i == 1
+        qMatrixBag(i,:) = (messages{i}.Position)'; %assigns a qMatrix with the joint states from the bag file
+    else
+        qMatrixBag(i,:) = (messages{i*resolution}.Position)'; %assigns a qMatrix with the joint states from the bag file
+        
     end
 end
 
 
-
-q1_2=UR5A.model.getpos();
-[q2_2,err2_2,exitflag_2]=UR5A.model.ikcon(brick5.pose,q1_2);
-qmatrix_2 = robotMotion.interpolateJointAnglesLinearUR5(q1_2,q2_2,steps);
-
-robotMotion.motion(qmatrix_2,UR5A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_2 = qmatrix_2(end,:);
-    [q4_2,err4_2,exitflag4_2]=UR5A.model.ikcon(brick5Destiny,q3_2);
-    qmatrixDes_2 = robotMotion.interpolateJointAnglesLinearUR5(q3_2,q4_2,steps);
-    
-    robotMotion.motion(qmatrixDes_2,UR5A.model);
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
-    robotMotion.motion(restoreQMatrixUR5,UR5A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    end
+for i = 1:size(qMatrixBag,1)
+    UR3A.model.animate(qMatrixBag(i,:));
+    text = ['Step number: ', num2str(i)];
+    disp(text); %shows that it is running even though it is quite slow
+    drawnow() %updates the figure
+    pause(0.01);
 end
-
-
-
-
-q1_3=UR3A.model.getpos();
-[q2_3,err2_3,exitflag_3]=UR3A.model.ikcon(brick2.pose,q1_3);
-qmatrix_3 = robotMotion.interpolateJointAnglesUR3(q1_3,q2_3,steps);
-robotMotion.motion(qmatrix_3,UR3A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_3 = qmatrix_3(end,:);
-    [q4_3,err4_3,exitflag4_3]=UR3A.model.ikcon(brick2Destiny,q3_3);
-    qmatrixDes_3 = robotMotion.interpolateJointAnglesUR3(q3_3,q4_3,steps);
-    robotMotion.motion(qmatrixDes_3,UR3A.model);
-    
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
-    robotMotion.motion(restoreQMatrixUR3,UR3A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    end
-end
-
-
-
-q1_4=UR5A.model.getpos();
-[q2_4,err2_4,exitflag_4]=UR5A.model.ikcon(brick6.pose,q1_4);
-qmatrix_4 = robotMotion.interpolateJointAnglesLinearUR5(q1_4,q2_4,steps);
-
-robotMotion.motion(qmatrix_4,UR5A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_4 = qmatrix_4(end,:);
-    [q4_4,err4_4,exitflag4_4]=UR5A.model.ikcon(brick6Destiny,q3_4);
-    qmatrixDes_4 = robotMotion.interpolateJointAnglesLinearUR5(q3_4,q4_4,steps);
-    
-    robotMotion.motion(qmatrixDes_4,UR5A.model);
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
-    robotMotion.motion(restoreQMatrixUR5,UR5A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    
-    end
-end
-
-
-
-
-
-
-q1_5=UR3A.model.getpos();
-[q2_5,err2_5,exitflag_5]=UR3A.model.ikcon(brick3.pose,q1_5);
-qmatrix_5 = robotMotion.interpolateJointAnglesUR3(q1_5,q2_5,steps);
-robotMotion.motion(qmatrix_5,UR3A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_5 = qmatrix_5(end,:);
-    [q4_5,err4_5,exitflag4_5]=UR3A.model.ikcon(brick3Destiny,q3_5);
-    qmatrixDes_5 = robotMotion.interpolateJointAnglesUR3(q3_5,q4_5,steps);
-    robotMotion.motion(qmatrixDes_5,UR3A.model);
-    
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
-    robotMotion.motion(restoreQMatrixUR3,UR3A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    end
-end
-
-
-
-q1_6=UR5A.model.getpos();
-[q2_6,err2_6,exitflag_6]=UR5A.model.ikcon(brick7.pose,q1_6);
-qmatrix_6 = robotMotion.interpolateJointAnglesLinearUR5(q1_6,q2_6,steps);
-
-robotMotion.motion(qmatrix_6,UR5A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_6 = qmatrix_6(end,:);
-    [q4_6,err4_6,exitflag4_6]=UR5A.model.ikcon(brick7Destiny,q3_6);
-    qmatrixDes_6 = robotMotion.interpolateJointAnglesLinearUR5(q3_6,q4_6,steps);
-    
-    robotMotion.motion(qmatrixDes_6,UR5A.model);
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
-    robotMotion.motion(restoreQMatrixUR5,UR5A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    
-    end
-end
-
-
-
-
-
-
-
-q1_7=UR3A.model.getpos();
-[q2_7,err2_7,exitflag_7]=UR3A.model.ikcon(brick4.pose,q1_7);
-qmatrix_7 = robotMotion.interpolateJointAnglesUR3(q1_7,q2_7,steps);
-robotMotion.motion(qmatrix_7,UR3A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_7 = qmatrix_7(end,:);
-    [q4_7,err4_7,exitflag4_7]=UR3A.model.ikcon(brick4Destiny,q3_7);
-    qmatrixDes_7 = robotMotion.interpolateJointAnglesUR3(q3_7,q4_7,steps);
-    robotMotion.motion(qmatrixDes_7,UR3A.model);
-    
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR3 = robotMotion.interpolateJointAnglesUR3(UR3A.model.getpos,qUR3still,steps);
-    robotMotion.motion(restoreQMatrixUR3,UR3A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    end
-end
-
-
-
-
-q1_8=UR5A.model.getpos();
-[q2_8,err2_8,exitflag_8]=UR5A.model.ikcon(brick8.pose,q1_8);
-qmatrix_8 = robotMotion.interpolateJointAnglesLinearUR5(q1_8,q2_8,steps);
-
-robotMotion.motion(qmatrix_8,UR5A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_8 = qmatrix_8(end,:);
-    [q4_8,err4_8,exitflag4_8]=UR5A.model.ikcon(brick8Destiny,q3_8);
-    qmatrixDes_8 = robotMotion.interpolateJointAnglesLinearUR5(q3_8,q4_8,steps);
-    
-    robotMotion.motion(qmatrixDes_8,UR5A.model);
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
-    robotMotion.motion(restoreQMatrixUR5,UR5A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    
-    end
-end
-
-
-
-
-
-q1_9=UR5A.model.getpos();
-[q2_9,err2_9,exitflag_9]=UR5A.model.ikcon(brick9.pose,q1_9);
-qmatrix_9 = robotMotion.interpolateJointAnglesLinearUR5(q1_9,q2_9,steps);
-
-robotMotion.motion(qmatrix_9,UR5A.model);
-brickCollected=true;
-
-if brickCollected ==true
-    q3_9 = qmatrix_9(end,:);
-    [q4_9,err4_9,exitflag4_9]=UR5A.model.ikcon(brick9Destiny,q3_9);
-    qmatrixDes_9 = robotMotion.interpolateJointAnglesLinearUR5(q3_9,q4_9,steps);
-    
-    robotMotion.motion(qmatrixDes_8,UR5A.model);
-    
-     brickDeposited=true;
-    
-    if brickDeposited==true
-    restoreQMatrixUR5 =robotMotion.interpolateJointAnglesLinearUR5(UR5A.model.getpos,qUR5still,steps);
-    robotMotion.motion(restoreQMatrixUR5,UR5A.model);
-    brickCollected = false;
-    brickDeposited=false;
-    
-    end
-end
-
-
-
-   
-%     
-%     q1=qmatrixDes(end,:);
-%      [q2,err2,exitflag2]=UR3A.model.ikcon(brick2.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%         disp('to Brick')
-%     robotMotion.motion(qmatrix,UR3A.model);
-% 
-%     %brick = brick2.pose;
-%     %q3=UR3A.model.ikine(brick);
-%      q3 = qmatrix(end,:);
-%     [q4,err4,exitflag4]=UR3A.model.ikcon(brick2Destiny,q3);
-%     qmatrixDes = robotMotion.interpolateJointAnglesUR3(q3,q4,steps);
-%         disp('to wall')
-%     robotMotion.motion(qmatrixDes,UR3A.model);
-%     
-%     
-%     q1=qmatrixDes(end,:);
-%      [q2,err2,exitflag2]=UR3A.model.ikcon(brick3.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%         disp('to Brick')
-%     robotMotion.motion(qmatrix,UR3A.model);
-% 
-%     %brick = brick3.pose;
-%     %q3=UR3A.model.ikine(brick);
-%      q3 = qmatrix(end,:);
-%     [q4,err4,exitflag4]=UR3A.model.ikcon(brick3Destiny,q3);
-%     qmatrixDes = robotMotion.interpolateJointAnglesUR3(q3,q4,steps);
-%         disp('to wall')
-%     robotMotion.motion(qmatrixDes,UR3A.model);
-%     
-%     
-%      
-%     q1=qmatrixDes(end,:);
-%      [q2,err2,exitflag2]=UR3A.model.ikcon(brick4.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%         disp('to Brick')
-%     robotMotion.motion(qmatrix,UR3A.model);
-% 
-%    % brick = brick4.pose;
-%     %q3=UR3A.model.ikine(brick);
-%     q3 = qmatrix(end,:);
-%     [q4,err4,exitflag4]=UR3A.model.ikcon(brick4Destiny,q3);
-%     qmatrixDes = robotMotion.interpolateJointAnglesUR3(q3,q4,steps);
-%     robotMotion.motion(qmatrixDes,UR3A.model);
-%     
-%     
-%     q1=UR3A.model.getpos();
-%     q2=UR3A.model.ikcon(brick3.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%     robotMotion.motion(qmatrix,UR3A.model);
-%     
-%     q1=UR3A.model.getpos();
-%     q2=UR3A.model.ikcon(brick4.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%     robotMotion.motion(qmatrix,UR3A.model);
-%     
-%     q1=UR3A.model.getpos();
-%     q2=UR3A.model.ikcon(brick2.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesUR3(q1,q2,steps);
-%     robotMotion.motion(qmatrix,UR3A.model);
-%     
-%     q1=UR5A.model.getpos();
-%     q2=UR5A.model.ikcon(brick5.pose,q1);
-%     qmatrix = robotMotion.interpolateJointAnglesLinearUR5(q1,q2,steps);
-%     robotMotion.motion(qmatrix,UR5A.model);
-
-    
-   
-  
