@@ -1,9 +1,10 @@
 function [  ] = Lab5Starter( )
 cla
 set(0,'DefaultFigureWindowStyle','docked')
+clear all
 clc
 close all
-
+view(3)
 %% Create 1-link robot
 L1 = Link('d',0,'a',1,'alpha',0,'qlim',[-pi pi]);
 robot = SerialLink(L1,'name','myRobot');
@@ -28,20 +29,21 @@ points = [X(:),Y(:),Z(:)];
 spherePc_h = plot3(points(:,1),points(:,2),points(:,3),'r.'); pause
 delete (spherePc_h)
 
-% % Or a triangle mesh
+
+%% Or a triangle mesh 
 tri = delaunay(X,Y,Z);
 sphereTri_h = trimesh(tri,X,Y,Z);
 drawnow();
-view(3)
+view(3) 
 axis equal
 
 %% Move Robot
 for q = 0:pi/180:pi/2
     robot.plot(q);
-    drawnow();
-    CheckCollision(robot,sphereCenter,radius);
-%     if CheckCollision(robot,sphereCenter,radius) == 1
-%         disp('UNSAFE: Robot stopped')
-%         break
-%     end
+    drawnow();  
+   % CheckCollision(robot,sphereCenter,radius);
+    if CheckCollision(robot,sphereCenter,radius)==true
+        disp('UNSAFE: Robot stopped')
+        break
+    end
 end
