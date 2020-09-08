@@ -14,7 +14,7 @@ q = zeros(1,3);                                                     % Create a v
 scale = 0.5;
 workspace = [-2 2 -2 2 -0.05 2];                                       % Set the size of the workspace when drawing the robot
 robot.plot(q,'workspace',workspace,'scale',scale);                  % Plot the robot
-        
+ %%       
 % 2.2 and 2.3
 centerpnt = [2,0,-0.5];
 side = 1.5;
@@ -31,7 +31,7 @@ camlight
 %             ; 0,-1,0 ...
 %             ;1,0,0];
 robot.teach;
-
+%%
 % 2.4: Get the transform of every joint (i.e. start and end of every link)
 tr = zeros(4,4,robot.n+1);
 tr(:,:,1) = robot.base;

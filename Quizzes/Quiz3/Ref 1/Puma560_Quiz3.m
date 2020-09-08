@@ -71,10 +71,10 @@ end
 %% Point in the end effector’s coordinate frame
 
 % Point position as [x y z]
-goalPosition = [0.5 0.1 0.6];
+goalPosition = [0.4 -0.2 0.7];
 
 % Point orientation as [roll pitch yaw] in degrees
-goalOrientation = [90 0 0];
+goalOrientation = [-90 0 0];
 
 % Joint configuration
 q = [90, 30, -80, 0, 45, 0];
