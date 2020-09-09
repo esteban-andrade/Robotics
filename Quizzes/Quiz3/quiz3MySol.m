@@ -11,7 +11,7 @@ q = [pi/12,0,0];
 endEffectorTR = R3.fkine(q);
 R3.teach(q);
 hold on;
-planeXntersect = 5;
+planeXntersect = 3;
 planeBounds = [planeXntersect-eps,planeXntersect+eps,-3,3,-3,3]; 
 [Y,Z] = meshgrid(planeBounds(3):0.1:planeBounds(4),planeBounds(5):0.1:planeBounds(6));
 X = repmat(planeXntersect,size(Y,1),size(Y,2));
@@ -19,7 +19,7 @@ surf(X,Y,Z);
 point1OnLine = endEffectorTR(1:3,4)';
 point2OnLine = [0 0 1];
 normal = [-3 0 0]
-point = [3   0 0]
+point = [3 0 0]
 [intersectionPoint,check] = LinePlaneIntersection(normal,point,point1OnLine,point2OnLine)
 
 %% Create a puma 560 Assume is on the flor with q. have a ball on centre at. Where is the ball position with respect to end effector.
@@ -32,12 +32,12 @@ view (3)
 
 mdl_puma560;
 
-q = deg2rad([90,30,-80,0,45,0]);
+q = deg2rad([0, 45, -80, 0, 45, 0]);
 endPose = p560.fkine(q);
 p560.teach(q);
 hold on
 
-ball= transl(0.4,-0.2,0.7)*trotx(-pi/2);
+ball=  transl(0.4,-0.2,0.7) * trotx(-pi/2) ;
 trplot(ball);
 
 DistanceEndEffectorToBall = inv(endPose)*ball;
@@ -101,7 +101,7 @@ clc
  %what was the previous robot to the sawyer (2 arms)
  disp('BAxter')
  
- %% create a puma 560 
+ %% create a puma 560 distance sensor 
  clc 
  clear all 
  close all 
@@ -113,7 +113,7 @@ p560.base = transl(0,0,0);
 q = deg2rad([0, 45, -80, 0, 45, 0]); % Q INPUT
 endEffectorTr = p560.fkine(q);
 X = 1
-Y = 2
+Y = -2.276
 Z = 1
 
 distanceSensorTr = transl(X,Y,Z)
@@ -124,20 +124,21 @@ dist = sqrt((distanceSensorTr(1,4) - endEffectorTr(1,4))^2 + ...
 y = sqrt(2^2-(1-endEffectorTr(1,4))^2-(1-endEffectorTr(3,4))^2)+endEffectorTr(2,4)
 
 
- normal = [-1,0,0] ;%Q INPUT
- point= [1,0,0] ;%Q INPUT
-planeXntersect = 2;%Q INPUT
-planeBounds = [planeXntersect-eps,planeXntersect+eps,-2,2,-2,2]; 
-[Y,Z] = meshgrid(planeBounds(3):0.1:planeBounds(4),planeBounds(5):0.1:planeBounds(6));
-X = repmat(planeXntersect,size(Y,1),size(Y,2));
-surf(X,Y,Z);
-rayEndTr = endEffectorTr * transl(0,0,10);
-point1OnLine = endEffectorTr(1:3,4)';
-point2OnLine = rayEndTr(1:3,4)';
-[intersectionPoint,check] = LinePlaneIntersection(...
-    normal,point,point1OnLine,point2OnLine)
+endEffector = p560.fkine(q);
+endEffectorPosition = transl(endEffector)'
+
+objectPosition = [-0.2165, -0.1500, 1.0620]
 
 
+hold on
+trplot(transl(objectPosition));
+
+diffPosition = endEffectorPosition - objectPosition;
+distance = sqrt(sum(diffPosition.^2))
+
+
+%sensors = transl(1,2,1);
+%pose = inv(sensors)*endEffector
 
 %% Create puma 560. When q is at ... determine a ray cast from z axis with normal and pint. 
 
@@ -152,14 +153,14 @@ clc
 %Create a puma 560.
 mdl_puma560;
 %The robot is at q = [pi/20,0,-pi/2,0,0,0].
-q = [pi/12,0,-pi/2,0,0,0]%Q INPUT
+q = [pi/6,0,-pi/2,0,0,0]%Q INPUT
 %Determine where a ray cast from the Z axis (the approach vector) of the end effector intersects with a planar wall. (i.e. normal = [-1 0 0], point = [1.2 0 0]).
 endEffectorTr = p560.fkine(q)
 p560.teach(q)
 hold on
  normal = [-1,0,0] ;%Q INPUT
- point= [1.8,0,0] ;%Q INPUT
-planeXntersect = 1.8;%Q INPUT
+ point= [3.6,0,0] ;%Q INPUT
+planeXntersect = 3.6;%Q INPUT
 planeBounds = [planeXntersect-eps,planeXntersect+eps,-2,2,-2,2]; 
 [Y,Z] = meshgrid(planeBounds(3):0.1:planeBounds(4),planeBounds(5):0.1:planeBounds(6));
 X = repmat(planeXntersect,size(Y,1),size(Y,2));
@@ -171,6 +172,53 @@ point2OnLine = rayEndTr(1:3,4)';
     normal,point,point1OnLine,point2OnLine)
 
 
+
+endEffector = p560.fkine(q);
+endEffectorPosition = transl(endEffector)';
+
+lineSegmentOffset = [0 0 1];
+lineSegmentEndPoint = transl(endEffector * transl(lineSegmentOffset))';
+
+hold on
+points = [endEffectorPosition; lineSegmentEndPoint]
+plot3(points(:,1), points(:,2), points(:,3), 'Color', 'r', 'LineStyle', '-', 'Marker', '+')
+
+% Create a surface plane that goes through [x y z] with a normal vector [A B C]
+planePoint = point;
+planeNormal = normal;
+
+A = planeNormal(1);
+B = planeNormal(2);
+C = planeNormal(3);
+D = sum(planePoint .* planeNormal);
+
+v = -2:0.1:2;
+if A ~= 0
+    [y, z] = meshgrid(v, v);
+    x = -1/A*(B*y + C*z - D);
+end
+
+if B ~= 0
+    [x, z] = meshgrid(v, v);
+    y = -1/B*(A*x + C*z - D);
+end
+
+if C ~= 0
+    [x, y] = meshgrid(v, v);
+    z = -1/C*(A*x + B*y - D);
+end
+
+hold on;
+surf(x,y,z);
+
+[intersectionPoint,check] = LinePlaneIntersection(planeNormal,planePoint,endEffectorPosition,lineSegmentEndPoint)
+if (check == 1) || (check == 3)
+    intersectionPointPlot_h = plot3(intersectionPoint(:,1),intersectionPoint(:,2),intersectionPoint(:,3),'g*');
+    
+    % Find distance from j1 to j2
+    diffPosition = endEffectorPosition - intersectionPoint;
+    distance = sqrt(sum(diffPosition.^2))
+end
 %% Given 2 joint states q1 q2. create a 50 step trayectory with trapezoudal velocity profile
 
 
@@ -179,10 +227,11 @@ clear
 clc
 clf
 
-steps = 50;
+
+steps = 45;
 
 q1 = [pi/10, pi/7, pi/5, pi/3, pi/4, pi/6];
-q2 = [-pi/10, -pi/7, -pi/5, -pi/3, -pi/4, -pi/6];
+q2 = [-pi/6, -pi/3, -pi/4, -pi/8, -pi/7, -pi/10];
 
 s = lspb(0,1,steps);                                             	% First, create the scalar function
         qMatrix = nan(steps,6);                                             % Create memory allocation for variables
@@ -197,7 +246,8 @@ for i = 2:steps
     acceleration(i,:) = velocity(i,:) - velocity(i-1,:);                    % Evaluate relative acceleration
 end
 
-max(abs(velocity))
+max_array= max(abs(velocity))
+maxVel = max(max_array)
 
 %% CReate a puma 560 use ikine to determine a joint state such positino end effector.  mask it off
 
@@ -209,7 +259,7 @@ clc
 mdl_puma560;
 
 %End effector pos= [0.6 -0.1 -0.2]
-endEffectorTr = transl(0.6,0.1,0.1)
+endEffectorTr = transl(0.6,-0.1,-0.2)
 
 q = p560.ikine(endEffectorTr,qn, [1 1 1 0 0 0])   
 
@@ -228,7 +278,7 @@ L5 = Link('d',0,'a',1);
         
 fiveDOF = SerialLink([L1 L2 L3 L4 L5],'name','5DOF');
        
-q = deg2rad([30 -30 30 -30 0]);
+q = deg2rad([30,-30,30,-30,0]);
 %qzero = zeros(1,5)
 endEffectorTr = fiveDOF.fkine(q)
 % fiveDOF.teach(q)
@@ -351,7 +401,7 @@ relativePosition = transl(relativePose)
 useClosedFormSolution = false;
 
 % Goal position as [x y z]
-goalPosition = [0.6 -0.1 -0.2];
+goalPosition = [0.6,0.1,0.1];
 
 % Goal orientation as [roll pitch yaw] in degrees
 goalOrientation = [0 0 0];
@@ -363,12 +413,12 @@ if useClosedFormSolution
 else
     % Mask vector
     mask = [1 1 1 0 0 0];
-    q = qn
+    q = qn;
     goalQ = p560.ikine(goalPose, q, mask)
 end
 
-p560.animate(goalQ)
-drawnow();
+%p560.animate(goalQ)
+%drawnow();
 
 
 
@@ -549,11 +599,7 @@ dist = sqrt((distanceSensorTr(1,4) - endEffectorTr(1,4))^2 + ...
 y = sqrt(2^2-(1-endEffectorTr(1,4))^2-(1-endEffectorTr(3,4))^2)+endEffectorTr(2,4)
 
 
-%% Lab Assignment 1
-close all
-set(0,'DefaultFigureWindowStyle','docked')
-clear
-clc
+
 
 
 %% Point In Puma End Effector Coordinate Frame
@@ -642,10 +688,10 @@ clear
 clc
 clf
 
-steps = 50;
+steps = 45;
 
 q1 = [pi/10, pi/7, pi/5, pi/3, pi/4, pi/6];
-q2 = [-pi/10, -pi/7, -pi/5, -pi/3, -pi/4, -pi/6];
+q2 = [-pi/6, -pi/3, -pi/4, -pi/8, -pi/7, -pi/10];
 
 s = lspb(0,1,steps);                                             	% First, create the scalar function
         qMatrix = nan(steps,6);                                             % Create memory allocation for variables
@@ -660,4 +706,5 @@ for i = 2:steps
     acceleration(i,:) = velocity(i,:) - velocity(i-1,:);                    % Evaluate relative acceleration
 end
 
-max(abs(velocity))
+max_array= max(abs(velocity))
+maxVel = max(max_array)
