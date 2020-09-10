@@ -143,3 +143,174 @@ for xRotRads = deg2rad(-20):deg2rad(1):deg2rad(20)
 end
 % Plot the scan data
 plot3(scanData(:,1),scanData(:,2),scanData(:,3),'r.');
+%%
+
+% question 2 More complex collision detection for 3-link planar robot
+clf
+clear all
+clc
+% Create vertices that represent an ellipsoid with radii (rx=3,ry=2,rz=1) centered at [xc,yc,zc] = [0,0,0].
+
+alpha(0.1) % makes  the elipsoid translucid
+
+centerPoint = [0,0,0];
+radii = [3,2,1];
+[X,Y,Z] = ellipsoid(centerPoint (1),centerPoint (2),centerPoint(3),radii(1),radii(2),radii(3));
+%plot it
+view(3)
+axis equal
+hold on
+elipsoidAtOrigin = surf(X,Y,Z);
+
+%% Put a cube with sides 1.5m in the environment that is centered at [2,0,-0.5]. Use mesh so as to create a high density mesh that has many vertices (either create in blender and load, or use 6 planes from meshgrid). Note: create a single plane of a cube centered at the origin like follows:
+% One side of the cube
+alpha(0.1)
+[Y,Z] = meshgrid(-0.75:0.05:0.75,-0.75:0.05:0.75);
+sizeMat = size(Y);
+X = repmat(0.75,sizeMat(1),sizeMat(2));
+oneSideOfCube_h = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+cubePoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+cubePoints = [ cubePoints ...
+             ; cubePoints * rotz(pi/2)...
+             ; cubePoints * rotz(pi) ...
+             ; cubePoints * rotz(3*pi/2) ...
+             ; cubePoints * roty(pi/2) ...
+             ; cubePoints * roty(-pi/2)];         
+         
+%% Plot the cube's point cloud         
+cubeAtOigin_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'r.');
+cubePoints = cubePoints + repmat([2,0,-0.5],size(cubePoints,1),1);
+cube_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'b.');
+axis equal
+
+%% 2.4 Check how many point and which points are inside the ellipsoid, using the equation. Note that points that are inside have an algebraic distance (AD) < 1, on the surface AD = 1 and outside AD > 1
+
+algebraicDistance = GetAlgebraicDist(cubePoints,centerPoint,radii);
+pointsInside = find(algebraicDistance<1);
+disp(['There are ',num2str(size(pointsInside,1)),' points inside']);
+
+%% 2.5 Transform the ellipsoid by translating it [1,1,1], do this by changing the values of [xc,yc,zx], then check which points are inside the ellipsoid
+centerPoint=[1,1,1];
+algebraicDistance = GetAlgebraicDist(cubePoints,centerPoint,radii);
+pointsInside = find(algebraicDistance<1);
+disp(['There are ',num2str(size(pointsInside,1)),' points inside After motinv the centre to ',num2str(centerPoint)]);
+
+%% 2.6 This time, using the original centered-at-the-origin ellipse, notice how you can transform the points in the environment by inv(transl(1,1,1)) and then check the original equation to see which have an algebraic distance less than 0. The points inside should be the same as when using the previous method.
+centerPoint=[0,0,0];
+cubePointsAndOnes = [inv(transl(1,1,1)) * [cubePoints,ones(size(cubePoints,1),1)]']'; %#ok<MINV>
+updatedCubePoints = cubePointsAndOnes(:,1:3) ;
+algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);
+pointsInside = find(algebraicDist < 1);
+display(['2.6: There are now ', num2str(size(pointsInside,1)),' points inside']);
+%% 2.7 Now, if the ellipsoid where transformed by transl(1,1,1)*trotx(pi/4), which points are inside (note that you will need to transform the points in the environment instead of the ellipsoid formula
+centerPoint=[0,0,0];
+cubePointsAndOnes = [inv(transl(1,1,1))*trotx(pi/4) * [cubePoints,ones(size(cubePoints,1),1)]']'; %#ok<MINV>
+updatedCubePoints = cubePointsAndOnes(:,1:3) ;
+algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);
+pointsInside = find(algebraicDist < 1);
+display(['2.7: There are now ', num2str(size(pointsInside,1)),' points inside']);
+
+
+%% 2.8 Now create a 3 link planar and use the 3 ellipsoids as the model points and faces. Now use teach to move it around so you should see the ellipsoids move around as well
+try delete(cubeAtOigin_h); end;
+try delete(elipsoidAtOrigin); end;
+try delete(oneSideOfCube_h); end;
+
+
+L1 = Link('d',0,'a',1,'alpha',0,'qlim',[-pi pi])
+L2 = Link('d',0,'a',1,'alpha',0,'qlim',[-pi pi])
+L3 = Link('d',0,'a',1,'alpha',0,'qlim',[-pi pi])        
+robot = SerialLink([L1 L2 L3],'name','myRobot');  
+centerPoint = [0,0,0];
+radii = [1,0.5,0.5];
+[X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
+for i = 1:4
+    robot.points{i} = [X(:),Y(:),Z(:)];
+    warning off
+    robot.faces{i} = delaunay(robot.points{i});    
+    warning on;
+end
+
+robot.plot3d([0,0,0]);
+axis equal
+camlight
+
+%% 2.9 (Bonus) For a given pose, work out the location of the ellipsoid of the end effector, using fkine, and the multiply the points in the environment by the inverse of this transform, and check the algebraic distance
+q = [0,0,0];
+tr = robot.fkine(q);
+cubePointsAndOnes = [inv(tr) * [cubePoints,ones(size(cubePoints,1),1)]']';
+updatedCubePoints = cubePointsAndOnes(:,1:3);
+algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);
+pointsInside = find(algebraicDist < 1);
+display(['2.9: There are now ', num2str(size(pointsInside,1)),' points inside']);
+
+%% 2.10 (Bonus) Do this for each of the ellipsoids on the three links. Note: you will need to have your own forward kinematics routine so you can compute the location of each of the ellipsoids
+q = [0,0,0];
+tr = zeros(4,4,robot.n+1);
+tr(:,:,1) = robot.base;
+L = robot.links;
+for i = 1 : robot.n
+    tr(:,:,i+1) = tr(:,:,i) * trotz(q(i)) * transl(0,0,L(i).d) * transl(L(i).a,0,0) * trotx(L(i).alpha);
+end
+
+% Go through each ellipsoid
+for i = 1: size(tr,3)
+    cubePointsAndOnes = [inv(tr(:,:,i)) * [cubePoints,ones(size(cubePoints,1),1)]']';
+    updatedCubePoints = cubePointsAndOnes(:,1:3);
+    algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);
+    pointsInside = find(algebraicDist < 1);
+    display(['2.10: There are ', num2str(size(pointsInside,1)),' points inside the ',num2str(i),'th ellipsoid']);
+end
+
+%% 3 Joint Interpolation vs Resolve Motion Rate Control
+% 3.1 Moving from A to B with Joint Interpolation: Load a 2-Link Planar Robot with mdl_planar2
+clf
+clear all
+clc
+steps = 50;
+mdl_planar2;  
+
+%% 3.2 Create two Transformation Matrices
+T1 = [eye(3) [1.5 1 0]'; zeros(1,3) 1];       % First pose
+T2 = [eye(3) [1.5 -1 0]'; zeros(1,3) 1];      % Second pose
+%% 3.3 Use Inverse Kinematics to solve the joint angles required to achieve each pose.
+M = [1 1 zeros(1,4)]; % Masking Matrix
+q1 = p2.ikine(T1,[0 0],M); % Solve for joint angles
+q2 = p2.ikine(T2,[0 0],M); % Solve for joint angles
+p2.plot(q1,'trail','r-');
+
+%% 3.4 Use joint interpolation to move between the two poses. Be sure to plot the end-effector path.
+qmatrix = jtraj(q1,q2,steps);
+p2.plot(qmatrix,'trail','r-');
+
+%% 3.6 Create two sets of points in the X-Y plane
+x1 = [1.5 1]';
+x2 = [1.5 -1]';
+deltaT = 0.01;
+
+%%   3.7 Create a matrix of waypoints
+x = zeros(2,steps); % Assign memory
+s = lspb(0,1,steps); % Create interpolation scalar
+for i = 1:steps
+x(:,i) = x1*(1-s(i)) + s(i)*x2; % Interpolate waypoints
+end
+
+%% 3.8 Create a matrix of joint angles
+qMatrix = nan(steps,2);
+
+%% 3.9 Set the Transformation for the 1st point, and solve for the joint angles
+qMatrix(1,:) = p2.ikine(T1,[0 0],M);
+%% 3.10 Use Resolved Motion Rate Control to move the end-effector from x1 to x2.
+for i = 1:steps-1
+    xdot = (x(:,i+1) - x(:,i))/deltaT;                             % Calculate velocity at discrete time step
+    J = p2.jacob0(qMatrix(i,:));            % Get the Jacobian at the current state
+    J = J(1:2,:);                           % Take only first 2 rows
+    qdot = inv(J)*xdot;                             % Solve velocitities via RMRC
+    qMatrix(i+1,:) =  qMatrix(i,:) + deltaT*qdot';                   % Update next joint state
+end
+
+p2.plot(qMatrix,'trail','r-');

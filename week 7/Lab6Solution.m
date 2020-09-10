@@ -217,8 +217,7 @@ display(['2.5: There are now ', num2str(size(pointsInside,1)),' points inside'])
 centerPoint = [0,0,0];
 cubePointsAndOnes = [inv(transl(1,1,1)) * [cubePoints,ones(size(cubePoints,1),1)]']';
 updatedCubePoints = cubePointsAndOnes(:,1:3);
-algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);
-algebraicDist = GetAlgebraicDist(cubePoints, centerPoint, radii);          
+algebraicDist = GetAlgebraicDist(updatedCubePoints, centerPoint, radii);        
 pointsInside = find(algebraicDist < 1);
 display(['2.6: There are now ', num2str(size(pointsInside,1)),' points inside']);
 
@@ -233,7 +232,7 @@ pause(1);
 
 % 2.8
 try delete(cubeAtOigin_h); end;
-try delete(ellipsoidAtOrigin_h); end;
+try delete(ellipsoidAtOrigin); end;
 try delete(oneSideOfCube_h); end;
 
 L1 = Link('d',0,'a',1,'alpha',0,'qlim',[-pi pi])
