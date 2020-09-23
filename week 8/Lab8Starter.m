@@ -1,4 +1,4 @@
-function Lab8Starter( )
+%function Lab8Starter( )
 close all
 clear all
 %%
@@ -6,6 +6,7 @@ clear all
 cam = CentralCamera('focal', 0.015, 'pixel', 10e-6, ...
 'resolution', [640 480], 'centre', [320 240], 'name', 'mycamera');
 
+view(3)
 
 %Create 3D point
 P = mkgrid( 2, 0.5, 'T', transl(0,0,5) );
