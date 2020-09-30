@@ -8,9 +8,9 @@ clc
 % to triangle colliso checks are required?
 
 
-Dof = 3;
+Dof = 5;
 distance =1;
-triangles = 50;
+triangles = 200;
 checks =Dof*triangles
 
 %%
@@ -22,14 +22,26 @@ clc
 % rectangular prim  with [v,f,fn] = rebtangular prism([..]). Create a 50
 % step trajectory with jtraj from q1 to q2  and use "result " = iscollisoin
 % .. determine poses in the trajectory that is in collision.
+
+%Get RectangularPrism.m and IsCollision.m. Create mdl_planar3 and a rectangular prism with [v,f,fn] = RectangularPrism([2,-1.1,-1], [3,1.1,1]).
+%Create a 50 step trajectory with jtraj from q1 = [pi/3,0,0]; to q2 = [-pi/3,0,0]; and use "result = IsCollision(p3,q,f,v,fn);" to determine the first pose in the trajectory that is in collision?
+
+
+
 set(0,'DefaultFigureWindowStyle','docked')
 view (3)
 mdl_planar3;
-[v,f,fn] = RectangularPrism([2,-1,-1],[3,1,1]);
+%[v,f,fn] = RectangularPrism([2,-1,-1],[3,1,1]);
+%[v,f,fn] = RectangularPrism([2,-1.1,-1], [3,1.1,1]);
+[v,f,fn] = RectangularPrism([2,-1.1,-1], [3,1.1,1])
 axis equal
 camlight
 
-q1 = [pi/3,0,0];
+%q1 = [pi/3,0,0];
+ %q1 = [-pi/3,-pi/3,0];
+ q1 = [pi/3,0,0];
+%q2 = [-pi/3,0,0];
+% q2 = [pi/3,pi/3,0]; 
 q2 = [-pi/3,0,0];
 steps = 50;
 q = jtraj(q1,q2,steps);
@@ -58,9 +70,9 @@ close all
 clc
 set(0,'DefaultFigureWindowStyle','docked')
 view (3)
-centerPoint = [3,2,1];
-radii = [1,2,3];
-[X,Y] = meshgrid(-10:1:10,-10:1:10);
+centerPoint = [0,0,0];
+radii = [1.10,1.10,1.10];
+[X,Y] = meshgrid(-5:0.1:5,-5:0.1:5);
 Z = X;
 [x,y,z]= ellipsoid(centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3));
 ellipsoid_h = surf(x,y,z)
@@ -90,6 +102,22 @@ mdl_planar3;
 %q = [0.7854 0.1745 -0.1745];
 %q = [0.7854 -0.7854 0.7854];
 %q = [0 -0.7854 -0.7854];
+
+%q= [0 1.5708 -1.5708];
+%q = [0.65 0.11 -0.1];
+%q = [0.7854 -0.7854 0.7854];
+%q = [0 -0.7854 -0.7854];
+
+%q= [0 1.5708 -1.5708];
+%q = [0.7854 0.1745 -0.1745];
+%q = [0.7854 -0.7854 0.7854];
+%q = [0 -0.7854 -0.7854];
+
+%q = [0 1.5708 -1.5708];
+%q = [0.5 0.5 0.5];
+%q = [0 -0.7854 -0.7854];
+q = [0.7854 -0.7854 0.7854];
+
 p3.plot(q);
 
 jacobian = p3.jacob0(q);
@@ -115,7 +143,25 @@ mdl_puma560;
 %q = [0 1.5708 -3.1416 0 0 0];
 %q = [0 0.01 0 0 0 0];
 %q = [0 2.1677 -2.7332 0 -0.9425 0];
-q = [0 0.7854 3.1416 0 0.7854 0];
+%q = [0 0.7854 3.1416 0 0.7854 0];
+	
+%q = [0 0.01 0 0 0 0];
+%q = [0 2.1677 -2.7332 0 -0.9425 0];
+%q = [0 1.5708 -3.1416 0 0 0];
+%q = [0 0.7854 3.1416 0 0.7854 0];
+
+%q = [0 1.5708 -3.0159 0.1466 0.5585 0]
+
+ 		
+q = [0 2.3562 -3.0159 0 -0.9076 0]
+
+ 		
+%q = [1.1170 1.0996 -3.4872 0.1466 0.5585 0.6500]
+
+ 		
+%q = [0 0.7 3 0 0.7 0]
+
+
 p560.plot(q);
 
 jacobian = p560.jacob0(q);
@@ -126,6 +172,39 @@ measureOfManip=p560.maniplty(q, 'yoshikawa')
 %measureOfManip = sqrt(det(jacobian(1:2,:)*jacobian(1:2,:)'))
 limit = p560.islimit(q);
 axis equal
+%%
+clear al
+close all
+clc
+
+
+%set(0,'DefaultFigureWindowStyle','docked')
+%view (3)
+robot = UR5;
+
+
+%q = [0 1.5708 -3.1416 0 0 0];
+%q = [0 0.01 0 0 0 0];
+%q = [0 2.1677 -2.7332 0 -0.9425 0];
+%q = [0 0.7854 3.1416 0 0.7854 0];
+	
+%q = [0 0.01 0 0 0 0];
+%q = [0 2.1677 -2.7332 0 -0.9425 0];
+%q = [0 1.5708 -3.1416 0 0 0];
+q = deg2rad([0,45,-85,-45,90,0]);
+
+
+robot.model.plot(q);
+
+jacobian = robot.model.jacob0(q);
+invserjacobian = inv(jacobian);
+
+robot.model.vellipse(q);
+measureOfManip=robot.model.maniplty(q, 'yoshikawa')
+%measureOfManip = sqrt(det(jacobian(1:2,:)*jacobian(1:2,:)'))
+limit = robot.model.islimit(q);
+%axis image
+
 
 %% Create camera on UR10
 
@@ -135,9 +214,12 @@ clc
 set(0,'DefaultFigureWindowStyle','docked')
 view (3)
 cam = CentralCamera('focal', 0.08, 'pixel', 10e-5,'resolution', [1024 1024], 'centre', [512 512],'name', 'UR10camera');
+%pStar = [600 300 300 600; 300 300 600 600];
 pStar = [600 300 300 600; 300 300 600 600];
-q0 =  [1.6; -1; -1.2; -0.5; 0; 0];
+%q0 =  [1.6; -1; -1.2; -0.5; 0; 0];
+q0 =[1.6; -1; -1.2; -0.5; 0; 0];
 robot = UR10();
+%P=[2,2,2,2; -0.3,0.3,0.3,-0.3; 1.3,1.3,0.7,0.7];
 P=[2,2,2,2; -0.3,0.3,0.3,-0.3; 1.3,1.3,0.7,0.7]; 
 plot_sphere(P, 0.05, 'g')
 
